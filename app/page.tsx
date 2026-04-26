@@ -1,170 +1,139 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, Zap, EyeOff, Lock, Check, Cpu } from "lucide-react";
+import { Shield, Zap, EyeOff, Lock, Check, Cpu, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="space-y-32 py-12">
+    <div className="flex flex-col items-center">
       {/* Hero Section */}
-      <section className="text-center space-y-8 relative py-20">
+      <section className="w-full min-h-screen flex flex-col items-center justify-center text-center px-6 pt-32 pb-20 relative overflow-hidden">
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="relative inline-block"
-        >
-          <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto glass-cyan flex items-center justify-center mb-8">
-            <Lock size={48} className="text-primary animate-pulse" />
-          </div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-64 sm:h-64 bg-primary/10 rounded-full blur-[80px] -z-10" />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
+          transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
+          className="z-10"
         >
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter mb-4">
-            Your words. <span className="text-primary">Their encryption.</span><br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Zero trust.</span>
+          <h2 className="text-primary font-semibold tracking-wide uppercase text-sm mb-4">Introducing CipherLayer</h2>
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight mb-8 leading-[1.05]">
+            Unbreakable. <br />
+            <span className="text-white/40">Untraceable.</span>
           </h1>
-          <p className="text-muted text-lg sm:text-xl max-w-2xl mx-auto">
-            WhatsApp sees gibberish. You see the truth. The world&apos;s first multi-algorithmic 
-            encryption wrapper for any messaging platform.
+          <p className="text-apple-grey text-xl md:text-2xl max-w-3xl mx-auto font-medium mb-12">
+            The world&apos;s most advanced encryption wrapper. <br className="hidden md:block" />
+            Designed for those who demand absolute digital privacy.
           </p>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Link href="/encrypt" className="apple-button-primary text-lg">
+              Start Encrypting
+            </Link>
+            <Link href="/exchange" className="apple-button-secondary text-lg flex items-center justify-center gap-2 group">
+              Pair Device <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="flex flex-wrap justify-center gap-4 pt-8"
+        {/* Hero Image / Asset */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, duration: 1.2, ease: [0.2, 0.8, 0.2, 1] }}
+          className="mt-20 w-full max-w-5xl relative aspect-video rounded-[40px] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.5)]"
         >
-          <Link href="/encrypt" className="cyber-button text-lg px-10">
-            Start Encrypting — Free
-          </Link>
-          <Link href="#how-it-works" className="px-10 py-3 rounded-lg border border-white/10 hover:bg-white/5 transition-all text-foreground uppercase font-mono tracking-widest text-sm">
-            How It Works
-          </Link>
+          <img 
+            src="/cipherlayer_hero_apple_style_1777201004291.png" 
+            alt="CipherLayer Interface" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
         </motion.div>
       </section>
 
-      {/* Features Grid */}
-      <section id="how-it-works" className="grid md:grid-cols-3 gap-8">
-        <FeatureCard 
-          icon={<Cpu className="text-primary" />}
-          title="PolyShield Engine"
-          description="Every message uses one of 12 custom algorithms, auto-selected and derived independently."
-        />
-        <FeatureCard 
-          icon={<Shield className="text-secondary" />}
-          title="Zero Knowledge"
-          description="We never store your keys. We never store your plaintext. We can't read your messages even if we wanted to."
-        />
-        <FeatureCard 
-          icon={<EyeOff className="text-danger" />}
-          title="Cipher Camouflage"
-          description="Disguise your encrypted data as phone numbers, stock tickers, or innocent daily texts."
-        />
-      </section>
-
-      {/* Comparison Table */}
-      <section className="glass p-8 sm:p-12 overflow-x-auto">
-        <h2 className="text-3xl font-mono mb-12 text-center uppercase tracking-widest">Comparison Matrix</h2>
-        <table className="w-full text-left min-w-[600px]">
-          <thead>
-            <tr className="border-b border-white/10 font-mono text-xs text-muted uppercase tracking-widest">
-              <th className="pb-6">Feature</th>
-              <th className="pb-6">WhatsApp</th>
-              <th className="pb-6">Telegram</th>
-              <th className="pb-6 text-primary">CipherLayer</th>
-            </tr>
-          </thead>
-          <tbody className="text-sm">
-            <ComparisonRow title="Multi-Algo Encryption" whatsapp={false} telegram={false} cipher={true} />
-            <ComparisonRow title="Anti-Surveillance Patterns" whatsapp={false} telegram={false} cipher={true} />
-            <ComparisonRow title="Zero-Trust Server Rule" whatsapp={false} telegram={false} cipher={true} />
-            <ComparisonRow title="Auto-Delete Post-Read" whatsapp={true} telegram={true} cipher={true} />
-            <ComparisonRow title="Decoy Generation (AI)" whatsapp={false} telegram={false} cipher={true} />
-          </tbody>
-        </table>
-      </section>
-
-      {/* Pricing */}
-      <section className="text-center space-y-16">
-        <h2 className="text-4xl font-mono uppercase tracking-widest">Select Your Clearance</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <PricingCard 
-            tier="Free" 
-            price="$0" 
-            features={["500 Char Limit", "12 PolyShield Algos", "Standard Key Exchange"]}
-            buttonText="Get Started"
+      {/* Bento Grid Features */}
+      <section className="w-full max-w-7xl px-6 py-40">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <BentoItem 
+            className="md:col-span-2 md:row-span-2 bg-[#161617]"
+            title="PolyShield™ Engine"
+            subtitle="The architecture of silence."
+            description="Our custom engine uses 12 unique cryptographic algorithms, independently derived for every single message. No two transmissions are alike."
+            icon={<Cpu className="text-primary" size={32} />}
           />
-          <PricingCard 
-            tier="Pro" 
-            price="$9" 
-            popular
-            features={["Unlimited Chars", "AI Decoy Messages", "Cipher Camouflage", "Priority AI Assistant"]}
-            buttonText="Go Pro"
+          <BentoItem 
+            className="bg-[#1d1d1f]"
+            title="Zero Trust"
+            subtitle="By design."
+            description="We never see your keys. We never store your messages. Absolute privacy is not a feature; it's the foundation."
+            icon={<Shield className="text-secondary" size={24} />}
           />
-          <PricingCard 
-            tier="Team" 
-            price="$29" 
-            features={["Everything in Pro", "Shared Contact Vaults", "Panic Wipe API", "Advanced Auditing"]}
-            buttonText="Contact Us"
+          <BentoItem 
+            className="bg-[#1d1d1f]"
+            title="Stealth"
+            subtitle="Hidden in plain sight."
+            description="Disguise your data using AI-generated decoys that look like everyday conversations."
+            icon={<EyeOff className="text-danger" size={24} />}
+          />
+          <BentoItem 
+            className="md:col-span-2 bg-gradient-to-br from-primary/10 to-transparent"
+            title="PWA Experience"
+            subtitle="Native power, web speed."
+            description="Install CipherLayer on any device. Offline-ready, lightning fast, and browser-independent."
+            icon={<Zap size={24} className="text-white" />}
           />
         </div>
+      </section>
+
+      {/* Comparison Section (Apple style clean) */}
+      <section className="w-full bg-[#f5f5f7] py-40 text-black px-6">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tight mb-20 text-center">Beyond the standard.</h2>
+          <div className="space-y-12">
+            <ComparisonPoint title="Algorithmic Diversity" value="12 Algos" />
+            <ComparisonPoint title="Server Access" value="Zero Knowledge" />
+            <ComparisonPoint title="Key Storage" value="Local-Only (IndexedDB)" />
+            <ComparisonPoint title="Transport" value="Universal Wrapper" />
+          </div>
+        </div>
+      </section>
+
+      {/* Final Call to Action */}
+      <section className="w-full py-60 text-center px-6">
+        <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-12">Ready to vanish?</h2>
+        <Link href="/encrypt" className="apple-button-primary text-2xl px-16 py-6">
+          Get Started — Free
+        </Link>
       </section>
     </div>
   );
 }
 
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
+function BentoItem({ title, subtitle, description, icon, className = "" }: any) {
   return (
     <motion.div 
-      whileHover={{ y: -5 }}
-      className="glass p-8 space-y-4 hover:border-primary/30 transition-all group"
+      whileHover={{ scale: 1.01 }}
+      className={`rounded-[30px] p-10 flex flex-col justify-between overflow-hidden group transition-all duration-500 ${className}`}
     >
-      <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">
+      <div className="space-y-4">
         {icon}
+        <div>
+          <h3 className="text-3xl font-semibold tracking-tight">{title}</h3>
+          <p className="text-apple-grey text-lg font-medium">{subtitle}</p>
+        </div>
       </div>
-      <h3 className="text-xl font-mono uppercase tracking-tight">{title}</h3>
-      <p className="text-muted text-sm leading-relaxed">{description}</p>
+      <p className="text-apple-grey mt-12 text-lg leading-relaxed max-w-sm">
+        {description}
+      </p>
     </motion.div>
   );
 }
 
-function ComparisonRow({ title, whatsapp, telegram, cipher }: { title: string, whatsapp: boolean, telegram: boolean, cipher: boolean }) {
+function ComparisonPoint({ title, value }: { title: string, value: string }) {
   return (
-    <tr className="border-b border-white/5">
-      <td className="py-6 font-medium">{title}</td>
-      <td className="py-6">{whatsapp ? <Check className="text-green-500" /> : <div className="w-5 h-px bg-white/20" />}</td>
-      <td className="py-6">{telegram ? <Check className="text-green-500" /> : <div className="w-5 h-px bg-white/20" />}</td>
-      <td className="py-6">{cipher ? <Check className="text-primary shadow-[0_0_10px_rgba(0,240,255,0.5)]" /> : <div className="w-5 h-px bg-white/20" />}</td>
-    </tr>
-  );
-}
-
-function PricingCard({ tier, price, features, buttonText, popular = false }: { tier: string, price: string, features: string[], buttonText: string, popular?: boolean }) {
-  return (
-    <div className={`glass p-8 space-y-8 flex flex-col ${popular ? 'border-primary/50 shadow-[0_0_30px_rgba(0,240,255,0.1)] relative' : ''}`}>
-      {popular && <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Most Popular</span>}
-      <div className="space-y-2">
-        <h3 className="font-mono text-xl uppercase tracking-widest">{tier}</h3>
-        <div className="text-4xl font-bold">{price}<span className="text-sm font-normal text-muted">/mo</span></div>
-      </div>
-      <ul className="space-y-4 text-sm text-muted flex-1 text-left">
-        {features.map((f, i) => (
-          <li key={i} className="flex items-center gap-2">
-            <Zap size={14} className="text-primary" /> {f}
-          </li>
-        ))}
-      </ul>
-      <button className={`w-full py-3 rounded-lg font-mono uppercase tracking-widest text-sm transition-all ${popular ? 'bg-primary text-black hover:bg-primary/80' : 'bg-white/5 hover:bg-white/10'}`}>
-        {buttonText}
-      </button>
+    <div className="flex justify-between items-end border-b border-black/10 pb-6">
+      <span className="text-2xl font-semibold tracking-tight">{title}</span>
+      <span className="text-2xl text-primary font-bold">{value}</span>
     </div>
   );
 }

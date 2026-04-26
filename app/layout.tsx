@@ -1,18 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
-import { Lock, Shield, Settings, Vault, Key } from "lucide-react";
+import { Shield, Key, Vault, Settings, Menu } from "lucide-react";
 import AIAssistant from "@/components/ai/AIAssistant";
 
 export const metadata: Metadata = {
-  title: "CipherLayer | Zero Trust Encryption",
-  description: "Your words. Their encryption. Zero trust.",
+  title: "CipherLayer | Privacy Reimagined",
+  description: "The silicon-standard in digital encryption wrapper.",
   manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050810",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -22,44 +21,44 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen flex flex-col">
-        <div className="data-dots" />
-        
-        {/* Navigation Bar */}
-        <nav className="sticky top-0 z-50 glass border-b border-white/5 px-6 py-4 flex justify-between items-center mb-8">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded bg-primary flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.5)]">
-              <Lock size={18} className="text-black" />
-            </div>
-            <span className="font-mono font-bold tracking-tighter text-xl hidden sm:inline">
-              CIPHER<span className="text-primary">LAYER</span>
-            </span>
-          </Link>
+      <body className="antialiased min-h-screen bg-black text-white">
+        {/* Apple Style Nav */}
+        <nav className="fixed top-0 w-full z-[100] backdrop-blur-xl bg-black/60 border-b border-white/5 h-12 flex items-center justify-center px-6">
+          <div className="w-full max-w-5xl flex justify-between items-center">
+            <Link href="/" className="hover:opacity-70 transition-opacity">
+              <span className="font-bold tracking-tighter text-sm">CIPHERLAYER</span>
+            </Link>
 
-          <div className="flex items-center gap-6 text-sm font-mono uppercase tracking-widest text-muted">
-            <Link href="/encrypt" className="hover:text-primary transition-colors flex items-center gap-2">
-              <Shield size={16} /> <span className="hidden md:inline">Encrypt</span>
-            </Link>
-            <Link href="/decrypt" className="hover:text-primary transition-colors flex items-center gap-2">
-              <Key size={16} /> <span className="hidden md:inline">Decrypt</span>
-            </Link>
-            <Link href="/vault" className="hover:text-primary transition-colors flex items-center gap-2">
-              <Vault size={16} /> <span className="hidden md:inline">Vault</span>
-            </Link>
-            <Link href="/settings" className="hover:text-primary transition-colors">
-              <Settings size={20} />
-            </Link>
+            <div className="flex items-center gap-8 text-[12px] font-medium text-white/60 tracking-tight">
+              <Link href="/encrypt" className="hover:text-white transition-colors">Encrypt</Link>
+              <Link href="/decrypt" className="hover:text-white transition-colors">Decrypt</Link>
+              <Link href="/vault" className="hover:text-white transition-colors">Vault</Link>
+              <Link href="/settings" className="hover:text-white transition-colors">
+                <Settings size={14} />
+              </Link>
+            </div>
           </div>
         </nav>
 
-        <main className="flex-1 container mx-auto px-6 max-w-5xl">
+        <main className="flex-1 w-full overflow-x-hidden">
           {children}
         </main>
 
         <AIAssistant />
 
-        <footer className="py-12 border-t border-white/5 text-center text-muted text-xs font-mono tracking-widest">
-          &copy; 2026 CIPHERLAYER // SECURE TERMINAL // ZERO TRUST ESTABLISHED
+        <footer className="py-20 bg-black border-t border-white/5 text-center px-6">
+          <div className="max-w-5xl mx-auto space-y-8">
+            <div className="text-[12px] text-apple-grey leading-relaxed max-w-2xl mx-auto">
+              CipherLayer uses advanced 256-bit encryption. Zero-trust principles apply to all data transmissions.
+              No private keys are stored on our servers. Privacy is a fundamental human right.
+            </div>
+            <div className="h-px bg-white/5" />
+            <div className="flex justify-center gap-8 text-[12px] text-apple-grey">
+              <span>Copyright © 2026 CipherLayer. All rights reserved.</span>
+              <span className="hover:text-white cursor-pointer">Privacy Policy</span>
+              <span className="hover:text-white cursor-pointer">Terms of Use</span>
+            </div>
+          </div>
         </footer>
       </body>
     </html>
