@@ -9,9 +9,15 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Security-PolyShield--12-blue?style=for-the-badge&logo=shield" />
-  <img src="https://img.shields.io/badge/Platform-Multi--Node-cyan?style=for-the-badge&logo=android" />
-  <img src="https://img.shields.io/badge/Status-Operational-green?style=for-the-badge&logo=checkmarx" />
+  <img src="https://img.shields.io/badge/Status-Ultra--Premium-blue?style=for-the-badge&logo=appveyor" />
+  <img src="https://img.shields.io/badge/Security-Omega-red?style=for-the-badge&logo=googlecloud" />
+  <img src="https://img.shields.io/badge/Interface-3D--Cyberpunk-cyan?style=for-the-badge&logo=blueprint" />
+</p>
+
+<p align="center">
+  <a href="https://github.com/jogeshd/cipherlayer/releases/latest">
+    <img src="https://img.shields.io/badge/Download-Android--APK-green?style=for-the-badge&logo=android" height="40" />
+  </a>
 </p>
 
 ---
