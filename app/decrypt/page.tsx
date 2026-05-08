@@ -1,212 +1,137 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Key, Unlock, Trash2, Copy, Check, ChevronDown, Clock } from "lucide-react";
+import { Unlock, Copy, Check, Trash2, Clock, ShieldAlert, ClipboardPaste } from "lucide-react";
 import { decryptMessage } from "@/lib/crypto/poly-shield";
 import { getContacts, Contact } from "@/lib/store/db";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 export default function DecryptPage() {
   const [ciphertext, setCiphertext] = useState("");
   const [plaintext, setPlaintext] = useState("");
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const [selectedSender, setSelectedSender] = useState<Contact | null>(null);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
-  const [showPlaintext, setShowPlaintext] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes
-  const [copied, setCopied] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [timeLeft, setTimeLeft] = useState(900);
 
   useEffect(() => {
     getContacts().then(setContacts);
   }, []);
 
+  const handleSmartPaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text.length > 20) {
+        setCiphertext(text);
+      }
+    } catch (err) {
+      console.error("Clipboard access denied");
+    }
+  };
+
   const handleDecrypt = async () => {
-    if (!ciphertext || !selectedSender) return;
-    
+    if (!ciphertext || !selectedContact) return;
     setIsDecrypting(true);
     await new Promise(r => setTimeout(r, 1500));
-    
     try {
-      const result = await decryptMessage(ciphertext, selectedSender.sharedSecret);
+      const result = await decryptMessage(ciphertext, selectedContact.sharedSecret);
       setPlaintext(result);
-      setShowPlaintext(true);
-      startTimer();
     } catch (error) {
-      alert("Decryption failed. Invalid ciphertext or wrong sender selected.");
-      console.error("Decryption failed", error);
+      alert("Decryption failed. Invalid handshake.");
     } finally {
       setIsDecrypting(false);
     }
   };
 
-  const startTimer = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    setTimeLeft(15 * 60);
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          handleWipe();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const handleWipe = () => {
-    setPlaintext("");
-    setCiphertext("");
-    setShowPlaintext(false);
-    if (timerRef.current) clearInterval(timerRef.current);
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(plaintext);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
-
   return (
-    <div className="max-w-2xl mx-auto space-y-8 py-8">
-      <div className="flex items-center gap-4 mb-12">
-        <div className="w-12 h-12 glass-cyan border-secondary/30 flex items-center justify-center">
-          <Key size={24} className="text-secondary" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-mono uppercase tracking-widest">Decrypt Message</h1>
-          <p className="text-xs text-muted font-mono">STEP 02 // BREACHING DATA SHIELD</p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-black pt-40 pb-20 px-6 relative overflow-hidden">
+      <div className="cipher-stream opacity-20" />
+      
+      <div className="max-w-[980px] mx-auto space-y-24 relative z-10">
+        <header className="text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold tracking-[0.2em] uppercase">
+            <Unlock size={14} /> Authorization Required
+          </div>
+          <h1 className="apple-h1 text-cyan-glow">Reveal.</h1>
+        </header>
 
-      <div className="space-y-6">
-        {/* Sender Selection */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-mono text-muted uppercase tracking-widest ml-1">Sender</label>
-          <div className="relative">
-            <select 
-              className="cyber-input appearance-none cursor-pointer"
-              onChange={(e) => setSelectedSender(contacts.find(c => c.id === e.target.value) || null)}
-              value={selectedSender?.id || ""}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          <div className="lg:col-span-7 space-y-12">
+            <div className="space-y-4">
+               <label className="text-xs font-bold uppercase tracking-widest text-apple-grey ml-1">Secure Source</label>
+               <select 
+                 className="apple-input-pro bg-[#1D1D1F] border border-white/5"
+                 onChange={(e) => setSelectedContact(contacts.find(c => c.id === e.target.value) || null)}
+                 value={selectedContact?.id || ""}
+               >
+                 <option value="" disabled>Select sender...</option>
+                 {contacts.map(c => (
+                   <option key={c.id} value={c.id}>{c.name}</option>
+                 ))}
+               </select>
+            </div>
+
+            <div className="space-y-4">
+               <div className="flex justify-between items-center px-1">
+                 <label className="text-xs font-bold uppercase tracking-widest text-apple-grey">Encrypted Cipher</label>
+                 <button 
+                  onClick={handleSmartPaste}
+                  className="text-[10px] font-bold text-cyan-400 flex items-center gap-2 hover:opacity-70 transition-opacity"
+                 >
+                   <ClipboardPaste size={12} /> Smart-Paste
+                 </button>
+               </div>
+               <textarea
+                  className="apple-input-pro min-h-[300px] resize-none font-mono text-sm bg-[#1D1D1F] border border-white/5"
+                  placeholder="Paste transport cipher or use Smart-Paste..."
+                  value={ciphertext}
+                  onChange={(e) => setCiphertext(e.target.value)}
+               />
+            </div>
+
+            <button 
+              onClick={handleDecrypt}
+              disabled={!ciphertext || !selectedContact || isDecrypting}
+              className="apple-button-blue w-full py-6 text-xl shadow-[0_0_30px_rgba(0,113,227,0.2)] disabled:opacity-20"
             >
-              <option value="" disabled>Select sender from vault...</option>
-              {contacts.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none" size={16} />
+              {isDecrypting ? "Scanning Cipher..." : "Decrypt Payload"}
+            </button>
+          </div>
+
+          <div className="lg:col-span-5 relative">
+            <AnimatePresence mode="wait">
+              {plaintext ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="sticky top-40 space-y-8"
+                >
+                  <div className="apple-card-pro bg-gradient-to-br from-[#1D1D1F] to-black">
+                     <div className="space-y-8">
+                        <div className="flex justify-between items-center">
+                          <h3 className="text-xs font-bold uppercase tracking-widest text-cyan-400">Decrypted Message</h3>
+                        </div>
+                        <div className="text-2xl leading-relaxed font-medium">
+                          {plaintext}
+                        </div>
+                     </div>
+                  </div>
+                  <button 
+                    onClick={() => setPlaintext("")}
+                    className="w-full py-4 rounded-full border border-red-500/20 text-red-500 font-bold hover:bg-red-500/5 transition-all"
+                  >
+                    Purge from Memory
+                  </button>
+                </motion.div>
+              ) : (
+                <div className="sticky top-40 h-[500px] rounded-[40px] border border-dashed border-white/10 flex flex-col items-center justify-center text-center p-12 space-y-4">
+                   <Clock className="text-white/5" size={80} />
+                   <p className="apple-body">Results will appear after authorization.</p>
+                </div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-
-        {/* Ciphertext Input */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-mono text-muted uppercase tracking-widest ml-1">Paste Ciphertext</label>
-          <textarea
-            className="cyber-input min-h-[150px] resize-none font-mono text-xs break-all"
-            placeholder="Paste the Base91 cipher text here..."
-            value={ciphertext}
-            onChange={(e) => setCiphertext(e.target.value)}
-          />
-        </div>
-
-        <button 
-          onClick={handleDecrypt}
-          disabled={!ciphertext || !selectedSender || isDecrypting}
-          className={cn(
-            "w-full py-4 font-mono uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3",
-            (!ciphertext || !selectedSender) 
-              ? "bg-white/5 text-muted cursor-not-allowed" 
-              : "bg-secondary text-white hover:bg-secondary/80 shadow-[0_0_20px_rgba(123,47,255,0.2)]"
-          )}
-        >
-          {isDecrypting ? (
-            <motion.div 
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-            />
-          ) : (
-            <>
-              <Unlock size={20} />
-              Decrypt Now
-            </>
-          )}
-        </button>
-
-        {/* Decrypted Plaintext Result */}
-        <AnimatePresence>
-          {showPlaintext && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="space-y-6 pt-8"
-            >
-              <div className="space-y-4">
-                <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-[0.2em]">
-                  <div className="flex items-center gap-2 text-danger">
-                    <Clock size={12} />
-                    Auto-wiping in {formatTime(timeLeft)}
-                  </div>
-                  <span className="text-muted">Data integrity: 100%</span>
-                </div>
-                
-                {/* Timer Progress Bar */}
-                <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: "100%" }}
-                    animate={{ width: `${(timeLeft / (15 * 60)) * 100}%` }}
-                    transition={{ duration: 1, ease: "linear" }}
-                    className="h-full bg-danger"
-                  />
-                </div>
-              </div>
-
-              <div className="p-8 glass-cyan border-primary/20 relative overflow-hidden">
-                {/* Scanline Animation */}
-                <motion.div 
-                  initial={{ top: "-100%" }}
-                  animate={{ top: "100%" }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                  className="absolute left-0 w-full h-[100px] bg-gradient-to-b from-transparent via-primary/10 to-transparent pointer-events-none z-10"
-                />
-                
-                <div className="relative z-0 min-h-[100px] whitespace-pre-wrap font-sans text-xl leading-relaxed text-foreground">
-                  {plaintext}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <button 
-                  onClick={handleCopy}
-                  className="py-4 glass flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-widest hover:bg-white/5 transition-all"
-                >
-                  {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
-                  {copied ? "Copied!" : "Copy Plaintext"}
-                </button>
-                <button 
-                  onClick={handleWipe}
-                  className="py-4 glass border-danger/30 text-danger flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-widest hover:bg-danger/10 transition-all"
-                >
-                  <Trash2 size={16} />
-                  Delete Now
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );

@@ -1,0 +1,8 @@
+{
+  "appId": "io.cipherlayer.app",
+  "appName": "CipherLayer",
+  "webDir": "out",
+  "server": {
+    "androidScheme": "https"
+  }
+}

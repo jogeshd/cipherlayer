@@ -10,25 +10,48 @@ const config: Config = {
     extend: {
       colors: {
         background: "#000000",
-        foreground: "#f5f5f7", // Apple's light text
-        primary: "#00F0FF",
-        secondary: "#7B2FFF",
-        apple: {
-          grey: "#86868b",
-          dark: "#1d1d1f",
-          blue: "#2997ff",
+        foreground: "#FFFFFF",
+        primary: {
+          DEFAULT: "#0071E3",
+          hover: "#147CE5",
+          glow: "rgba(0, 113, 227, 0.4)",
         },
-        surface: "rgba(255, 255, 255, 0.04)",
+        apple: {
+          grey: "#86868B",
+          dark: "#1D1D1F",
+          silver: "#F5F5F7",
+          glass: "rgba(22, 22, 23, 0.72)",
+        },
       },
       fontFamily: {
-        sans: ["Inter", "SF Pro Display", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
-      },
-      spacing: {
-        '128': '32rem',
-        '144': '36rem',
+        sans: [
+          "Inter", 
+          "-apple-system", 
+          "BlinkMacSystemFont", 
+          "'SF Pro Display'", 
+          "sans-serif"
+        ],
       },
       backgroundImage: {
-        "apple-gradient": "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%)",
+        'mesh-gradient': "radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%)",
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'reveal': 'reveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        reveal: {
+          '0%': { opacity: '0', transform: 'translateY(40px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        }
+      },
+      borderRadius: {
+        'apple': '28px',
+        'apple-pro': '40px',
       },
     },
   },

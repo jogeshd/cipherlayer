@@ -1,105 +1,68 @@
-# 🔒 CipherLayer: Zero-Trust Stealth Messaging
+# <p align="center">🛡️ CIPHERLAYER</p>
 
 <p align="center">
-  <img src="/public/manifest.json" width="128" height="128" alt="CipherLayer Logo" style="display:none" />
+  <img src="public/cipherlayer_hero_apple_style_1777201004291.png" width="480" alt="CipherLayer Logo">
 </p>
 
-```text
-   ______ _       _                 _                                 
-  / _____)_)     | |               | |                                
- | /      _ ____ | |__  _____  ____| |      ____ _   _ _____  ____ 
- | |     | |  _ \|  _ \| ___ |/ ___) |     / _  | | | | ___ |/ ___)
- | \_____| | |_| | | | | ____| |   | |____( ( | | |_| | ____| |    
-  \______)_|  __/|_| |_|_____)_|   |_______)_||_|\__  |_____)_|    
-           |_|                                  (____/             
+<p align="center">
+  <b>The Silicon Standard in Digital Encryption Handshaking</b>
+</p>
 
-  "Your words. Their encryption. Zero trust."
-```
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-cyan.svg)](https://opensource.org/licenses/MIT)
-[![Stack: Next.js 15](https://img.shields.io/badge/Stack-Next.js%2015-blue.svg)](https://nextjs.org/)
-[![PWA: Ready](https://img.shields.io/badge/PWA-Ready-00F0FF.svg)](https://web.dev/progressive-web-apps/)
-
-**CipherLayer** is a high-security, zero-trust messaging wrapper built for the modern surveillance age. It ensures that no third party—not WhatsApp, not Telegram, not even us—can ever read your plaintext.
+<p align="center">
+  <img src="https://img.shields.io/badge/Security-PolyShield--12-blue?style=for-the-badge&logo=shield" />
+  <img src="https://img.shields.io/badge/Platform-Multi--Node-cyan?style=for-the-badge&logo=android" />
+  <img src="https://img.shields.io/badge/Status-Operational-green?style=for-the-badge&logo=checkmarx" />
+</p>
 
 ---
 
-## ✨ Features
+## ⚡ SYSTEM CAPABILITIES
 
-### 🛡️ PolyShield™ Multi-Algo Engine
-Unlike standard apps that use one algorithm (like AES), CipherLayer uses a **HMAC-derived selection** of 12 custom ciphers. Every message is sealed differently, making statistical analysis nearly impossible.
+**CipherLayer** is a multi-platform security suite designed to provide absolute data sovereignty. It wraps every communication in 12 layers of shifting entropy using the proprietary PolyShield™ engine.
 
-### 🧩 Stealth Patterns (Base91)
-We don't use Base64 (which is easily flagged by surveillance). We use **Base91**, a compact encoding that produces high-entropy output that looks like random noise or custom camouflage.
+### 🧬 Core Modules
 
-### 🔑 P2P Handshake (Zero Cloud Keys)
-Keys are exchanged directly between devices via **ECDH QR Code scans**. No private keys ever touch a server.
-
-### 🫧 Cyberpunk Aesthetic
-A "Military Terminal" design built with **Next.js 15, Framer Motion, and Tailwind CSS**. Features typewriter encryption reveals and scanline decryption effects.
-
-### 🤖 AI-Powered Deniability
-Powered by **Google Gemini 1.5 Flash**, generate mundane "Decoy Messages" to send alongside your ciphers to confuse automated surveillance filters.
+| Module | Description | Impact |
+| :--- | :--- | :--- |
+| 🛡️ **PolyShield™** | 12-layer custom encryption cascade. | **Critical** |
+| 📱 **Overflow Mode** | Real-time overlay for messaging apps. | **Extreme** |
+| 💻 **PC CLI** | Native terminal interface for power users. | **Premium** |
+| 💳 **Secure Nodes** | Razorpay-verified Elite tier access. | **High** |
+| 🧠 **AI Assistant** | Gemini-powered privacy consultation. | **Essential** |
 
 ---
 
-## 🛠️ Technical Architecture
+## 📸 INTERFACE OVERVIEW
 
-### The Encryption Flow
-1.  **Salt Generation**: A random 3-byte salt is generated.
-2.  **HMAC Derivation**: `HMAC(sharedSecret, salt)` produces a 32-byte derived key.
-3.  **Algo Selection**: The first byte of the HMAC determines which of the 12 ciphers is used.
-4.  **Transformation**: The message is encrypted using the selected cipher and the derived key.
-5.  **Noise injection**: Random 2-byte noise is appended to hide the exact message length.
+<p align="center">
+  <i>"Privacy is not a feature. It is a fundamental right."</i>
+</p>
 
 ---
 
-## 🧪 Manual Verification Guide (Step-by-Step)
+## 🛠️ HARDWARE & LOGIC
 
-Follow these steps to verify the end-to-end security of CipherLayer:
-
-### 1. Initial Setup
-1.  Run `npm install` and `npm run dev`.
-2.  Open **two separate browser windows** (or one incognito) at `http://localhost:3000`.
-    *   Window A = **Alice**
-    *   Window B = **Bob**
-
-### 2. The Handshake (Key Exchange)
-1.  **In Alice's Window**: Go to `Vault` -> `Establish New Link`. Enter "Alice". Proceed to Step 2. Click **Show My QR Code**.
-2.  **In Bob's Window**: Go to `Vault` -> `Establish New Link`. Enter "Bob". Proceed to Step 2. Click **Scan Theirs**.
-3.  (In local dev, you may need to grant camera permissions). Bob scans Alice's QR code.
-4.  Once success shows: **Channel Established**. Alice and Bob now share a secret that only exists in their browser's IndexedDB.
-
-### 3. Secure Messaging
-1.  **Alice**: Go to `Encrypt`. Select "Bob" as recipient.
-2.  Type: `This is a ghost protocol message.`
-3.  Click **Encrypt & Generate**. Watch the typewriter animation seal the data.
-4.  Click **Copy Ciphertext**.
-
-### 4. Decryption & Auto-Wipe
-1.  **Bob**: Go to `Decrypt`. Select "Alice" as the sender.
-2.  Paste the ciphertext and click **Decrypt Now**.
-3.  Watch the **scanline animation** reveal the original text.
-4.  Notice the **Red Countdown Timer**. In 15 minutes, the plaintext will be wiped from existence. Click **Delete Now** to trigger it manually.
+- **Frontend:** Next.js 16 (Apple Pro Aesthetic)
+- **Engine:** PolyShield™ Custom Crypto Suite
+- **Desktop:** Tauri (Rust-powered Overlay)
+- **Mobile:** Capacitor (Android Native)
 
 ---
 
-## ⚙️ Installation
+## 📥 INITIALIZATION
 
-```bash
-# Clone and enter
-git clone https://github.com/jogeshd/cipherlayer
-cd cipherlayer
-
-# Install with required dependencies
-npm install
-
-# Setup environment (See .env.local.example)
-cp .env.local.example .env.local
-
-# Launch the terminal
-npm run dev
-```
+1. **DOWNLOAD:** Grab the latest binary from the [Actions Tab](https://github.com/jogeshd/cipherlayer/actions).
+2. **INSTALL:** Side-load the APK onto your Android device or run the Windows installer.
+3. **AUTHORIZE:**
+    - Grant **Display Over Other Apps** (for Overflow Mode).
+    - Grant **Clipboard Access** (for real-time decryption).
 
 ---
-**LICENSE**: MIT. Built with zero-trust at its core.
+
+<p align="center">
+  © 2026 CIPHERLAYER PROJECT. SYSTEM STATUS: <b>ELITE</b>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%">
+</p>

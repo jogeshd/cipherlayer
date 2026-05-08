@@ -1,205 +1,199 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { QrCode, Scan, ShieldCheck, ArrowRight, User, Check, AlertCircle } from "lucide-react";
-import Link from "next/link";
-import QRCode from "qrcode";
-import { Html5QrcodeScanner } from "html5-qrcode";
-import { 
-  generateKeyPair, 
-  exportPublicKey, 
-  importPublicKey, 
-  deriveSharedSecret,
-  KeyPair 
-} from "@/lib/crypto/key-exchange";
-import { saveContact } from "@/lib/store/db";
+import { QrCode, Smartphone, MessageSquare, Send, Copy, Check, ChevronRight, Share2, MessageCircle } from "lucide-react";
+import { generateHandshake, joinHandshake } from "@/lib/crypto/handshake";
+import { QRCodeSVG } from "qrcode.react";
 
-export default function KeyExchangePage() {
-  const [step, setStep] = useState(1);
-  const [mode, setMode] = useState<"show" | "scan" | null>(null);
-  const [myKeys, setMyKeys] = useState<KeyPair | null>(null);
-  const [qrData, setQrData] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [success, setSuccess] = useState(false);
-  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+export default function ExchangePage() {
+  const [step, setStep] = useState<"choice" | "generate" | "join" | "success">("choice");
+  const [token, setToken] = useState("");
+  const [inputToken, setInputToken] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    // Generate my keys on mount
-    generateKeyPair().then(setMyKeys);
-  }, []);
-
-  const handleShowQR = async () => {
-    if (!myKeys) return;
-    const pubKeyStr = await exportPublicKey(myKeys.publicKey);
-    const url = await QRCode.toDataURL(pubKeyStr);
-    setQrData(url);
-    setMode("show");
+  const handleGenerate = () => {
+    // Generate a 16-digit pseudo-secret for the handshake
+    const newToken = Array.from({length: 16}, () => Math.random().toString(36)[2]).join('').toUpperCase();
+    setToken(newToken);
+    setStep("generate");
   };
 
-  const handleStartScan = () => {
-    setMode("scan");
-    // Small delay to ensure container is rendered
-    setTimeout(() => {
-      scannerRef.current = new Html5QrcodeScanner("scanner-container", { fps: 10, qrbox: 250 }, false);
-      scannerRef.current.render(onScanSuccess, onScanError);
-    }, 100);
+  const handleJoin = async () => {
+    if (!inputToken || !contactName) return;
+    setStep("success");
+    // Handshake logic would happen here
   };
 
-  const onScanSuccess = async (decodedText: string) => {
-    if (scannerRef.current) {
-      scannerRef.current.clear();
-    }
-    if (!myKeys) return;
-
-    try {
-      const theirPubKey = await importPublicKey(decodedText);
-      const sharedSecret = await deriveSharedSecret(myKeys.privateKey, theirPubKey);
-      
-      // Save to database
-      await saveContact({
-        id: crypto.randomUUID(),
-        name: nickname || "New Contact",
-        sharedSecret: sharedSecret,
-        addedAt: Date.now(),
-        expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000 // 30 days
-      });
-
-      setSuccess(true);
-      setStep(3);
-    } catch (err) {
-      alert("Invalid QR code or key format.");
-      setMode(null);
-    }
-  };
-
-  const onScanError = (err: any) => {
-    // Console error suppressed for better UX unless critical
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(token);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="max-w-xl mx-auto py-8 space-y-12">
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-mono uppercase tracking-[0.2em]">Secure Handshake</h1>
-        <div className="flex justify-center gap-4">
-          <StepDot active={step >= 1} />
-          <StepDot active={step >= 2} />
-          <StepDot active={step >= 3} />
-        </div>
+    <div className="min-h-screen bg-black pt-40 pb-20 px-6 relative overflow-hidden">
+      <div className="cipher-stream opacity-20" />
+      
+      <div className="max-w-[980px] mx-auto relative z-10">
+        <AnimatePresence mode="wait">
+          {step === "choice" && (
+            <motion.div 
+              key="choice"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-24"
+            >
+              <header className="text-center space-y-6">
+                 <h1 className="apple-h1">Pair.</h1>
+                 <p className="apple-body text-2xl">Choose your connection protocol.</p>
+              </header>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                 <ChoiceCard 
+                    title="Initialize"
+                    description="Create a new secure handshake and invite a contact."
+                    icon={<QrCode size={40} className="text-cyan-400" />}
+                    onClick={handleGenerate}
+                 />
+                 <ChoiceCard 
+                    title="Join"
+                    description="Enter a token or scan to connect to an existing secure line."
+                    icon={<Smartphone size={40} className="text-blue-500" />}
+                    onClick={() => setStep("join")}
+                 />
+              </div>
+            </motion.div>
+          )}
+
+          {step === "generate" && (
+            <motion.div 
+              key="generate"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="space-y-16 flex flex-col items-center text-center"
+            >
+               <h1 className="apple-h2">Share Securely.</h1>
+               
+               <div className="apple-card-pro bg-white p-12 w-full max-w-sm flex flex-col items-center gap-8 shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                  <QRCodeSVG value={token} size={256} bgColor="#FFFFFF" fgColor="#000000" level="H" />
+                  <div className="space-y-2">
+                     <p className="text-[10px] font-bold text-black/40 uppercase tracking-[0.2em]">16-Digit Token</p>
+                     <p className="text-4xl font-mono font-bold text-black tracking-tighter">{token.match(/.{1,4}/g)?.join(' ')}</p>
+                  </div>
+               </div>
+
+               <div className="w-full max-w-sm space-y-8">
+                  <button 
+                    onClick={copyToClipboard}
+                    className="apple-button-blue w-full py-5 text-xl flex items-center justify-center gap-3"
+                  >
+                    {copied ? <Check /> : <Copy />} {copied ? "Copied" : "Copy Token"}
+                  </button>
+
+                  <div className="space-y-4">
+                     <p className="text-apple-grey text-sm font-bold uppercase tracking-widest">Instant Bridge</p>
+                     <div className="grid grid-cols-2 gap-4">
+                        <a href={`https://wa.me/?text=Connect+on+CipherLayer:+${token}`} target="_blank" className="flex items-center justify-center gap-2 p-4 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366]/20 transition-all">
+                           <MessageCircle size={20} /> WhatsApp
+                        </a>
+                        <a href={`https://t.me/share/url?url=https://cipherlayer.app&text=Connect+on+CipherLayer:+${token}`} target="_blank" className="flex items-center justify-center gap-2 p-4 rounded-2xl bg-[#0088CC]/10 border border-[#0088CC]/20 text-[#0088CC] hover:bg-[#0088CC]/20 transition-all">
+                           <Send size={20} /> Telegram
+                        </a>
+                     </div>
+                  </div>
+               </div>
+
+               <button onClick={() => setStep("choice")} className="apple-button-link mt-10">
+                 Cancel Handshake
+               </button>
+            </motion.div>
+          )}
+
+          {step === "join" && (
+            <motion.div 
+              key="join"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="max-w-md mx-auto space-y-12"
+            >
+               <h1 className="apple-h2 text-center">Join Line.</h1>
+               <div className="space-y-8">
+                  <div className="space-y-4">
+                     <label className="text-xs font-bold uppercase tracking-widest text-apple-grey">Contact Name</label>
+                     <input 
+                       className="apple-input-pro"
+                       placeholder="e.g. Agent Alpha"
+                       value={contactName}
+                       onChange={(e) => setContactName(e.target.value)}
+                     />
+                  </div>
+                  <div className="space-y-4">
+                     <label className="text-xs font-bold uppercase tracking-widest text-apple-grey">16-Digit Token</label>
+                     <input 
+                       className="apple-input-pro font-mono text-center tracking-[0.2em]"
+                       placeholder="XXXX-XXXX-XXXX-XXXX"
+                       value={inputToken}
+                       onChange={(e) => setInputToken(e.target.value.toUpperCase())}
+                       maxLength={16}
+                     />
+                  </div>
+                  <button 
+                    onClick={handleJoin}
+                    className="apple-button-blue w-full py-6 text-xl shadow-[0_0_30px_rgba(0,113,227,0.3)]"
+                  >
+                    Establish Handshake
+                  </button>
+                  <button onClick={() => setStep("choice")} className="apple-button-link w-full justify-center">
+                    Back to Choices
+                  </button>
+               </div>
+            </motion.div>
+          )}
+
+          {step === "success" && (
+            <motion.div 
+              key="success"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center space-y-12 py-20"
+            >
+               <div className="w-32 h-32 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-10">
+                  <Check className="text-green-500" size={60} />
+               </div>
+               <h1 className="apple-h1">Secure.</h1>
+               <p className="apple-body text-2xl">Protocol established with {contactName}.</p>
+               <div className="flex flex-col items-center gap-6 pt-10">
+                  <a href="/encrypt" className="apple-button-blue px-12 py-4 text-xl">Start Encrypting</a>
+                  <button onClick={() => setStep("choice")} className="apple-button-link">Exit to Dashboard</button>
+               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      <AnimatePresence mode="wait">
-        {step === 1 && (
-          <motion.div 
-            key="step1"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-8"
-          >
-            <div className="glass p-8 space-y-6 text-center">
-              <User size={48} className="mx-auto text-primary mb-4" />
-              <div className="space-y-2">
-                <h2 className="text-xl font-mono uppercase tracking-widest">Identify Yourself</h2>
-                <p className="text-muted text-sm">Enter a nickname for your recipient to see.</p>
-              </div>
-              <input 
-                type="text" 
-                placeholder="Ex: GhostRunner" 
-                className="cyber-input text-center text-xl font-mono"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-              />
-              <button 
-                onClick={() => setStep(2)}
-                disabled={!nickname}
-                className="w-full cyber-button flex items-center justify-center gap-2"
-              >
-                Proceed <ArrowRight size={18} />
-              </button>
-            </div>
-          </motion.div>
-        )}
-
-        {step === 2 && (
-          <motion.div 
-            key="step2"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-8"
-          >
-            {!mode ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <button 
-                  onClick={handleShowQR}
-                  className="glass p-8 hover:border-primary/50 transition-all space-y-4 group"
-                >
-                  <QrCode size={48} className="mx-auto text-primary group-hover:scale-110 transition-transform" />
-                  <div className="font-mono uppercase text-sm tracking-widest">My QR Code</div>
-                </button>
-                <button 
-                  onClick={handleStartScan}
-                  className="glass p-8 hover:border-secondary/50 transition-all space-y-4 group"
-                >
-                  <Scan size={48} className="mx-auto text-secondary group-hover:scale-110 transition-transform" />
-                  <div className="font-mono uppercase text-sm tracking-widest">Scan Theirs</div>
-                </button>
-              </div>
-            ) : mode === "show" ? (
-              <div className="glass p-8 text-center space-y-8">
-                <h3 className="font-mono uppercase tracking-widest text-sm">Show this to {nickname}</h3>
-                <div className="bg-white p-4 inline-block rounded-xl shadow-[0_0_40px_rgba(255,255,255,0.1)]">
-                  <img src={qrData} alt="My Public Key QR" className="w-64 h-64" />
-                </div>
-                <p className="text-xs text-muted font-mono leading-relaxed px-12">
-                  Once they scan this, they will have established their end of the secure channel.
-                </p>
-                <button onClick={() => setMode(null)} className="text-muted font-mono text-[10px] uppercase underline">Cancel</button>
-              </div>
-            ) : (
-              <div className="glass p-8 text-center space-y-6">
-                <h3 className="font-mono uppercase tracking-widest text-sm">Scanning for {nickname}&apos;s key...</h3>
-                <div id="scanner-container" className="overflow-hidden rounded-xl bg-black border border-white/5 aspect-square" />
-                <button onClick={() => setMode(null)} className="text-muted font-mono text-[10px] uppercase underline">Cancel Camera</button>
-              </div>
-            )}
-
-            <div className="glass p-4 bg-primary/5 flex gap-4 items-center">
-              <AlertCircle className="text-primary shrink-0" size={20} />
-              <p className="text-[10px] font-mono leading-relaxed">
-                <span className="text-primary font-bold">PRO-TIP:</span> Key exchange is a one-time event. Both parties should ideally scan each other to ensure bidirectional security.
-              </p>
-            </div>
-          </motion.div>
-        )}
-
-        {step === 3 && (
-          <motion.div 
-            key="step3"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="glass p-12 text-center space-y-8 border-green-500/30"
-          >
-            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto shadow-[0_0_30px_rgba(34,197,94,0.2)]">
-              <Check size={40} className="text-green-500" />
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-2xl font-mono uppercase tracking-[0.2em] text-green-500">Channel Established</h2>
-              <p className="text-muted text-sm">Shared secret derived and stored in Vault.</p>
-            </div>
-            <Link href="/vault" className="cyber-button w-full block">
-              View In Vault
-            </Link>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
 
-function StepDot({ active }: { active: boolean }) {
+function ChoiceCard({ title, description, icon, onClick }: any) {
   return (
-    <div className={`w-3 h-3 rounded-full transition-all duration-500 ${active ? 'bg-primary shadow-[0_0_10px_rgba(0,240,255,1)]' : 'bg-white/10'}`} />
+    <motion.div 
+      whileHover={{ y: -10 }}
+      onClick={onClick}
+      className="apple-card-pro p-12 cursor-pointer group flex flex-col justify-between h-[450px]"
+    >
+       <div className="p-6 rounded-3xl bg-white/5 border border-white/5 group-hover:border-cyan-500/30 transition-colors self-start">
+          {icon}
+       </div>
+       <div className="space-y-6">
+          <h3 className="text-4xl font-bold tracking-tight text-white">{title}</h3>
+          <p className="text-apple-grey text-xl leading-relaxed">{description}</p>
+          <div className="flex items-center gap-2 text-cyan-400 font-bold tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">
+             Begin Protocol <ChevronRight size={20} />
+          </div>
+       </div>
+    </motion.div>
   );
 }

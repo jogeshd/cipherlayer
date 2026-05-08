@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cli": "tsx scripts/cli.ts",
+    "android:init": "npx cap init cipherlayer io.cipherlayer.app --web-dir out && npx cap add android",
+    "android:sync": "next build && npx cap sync android",
+    "android:open": "npx cap open android"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -20,6 +24,7 @@
     "lucide-react": "^1.11.0",
     "next": "16.2.4",
     "qrcode": "^1.5.4",
+    "razorpay": "^2.9.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "stripe": "^22.1.0",
@@ -34,6 +39,10 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "tsx": "^4.19.1",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/android": "^6.1.2"
   }
 }
