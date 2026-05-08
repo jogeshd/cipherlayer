@@ -9,8 +9,9 @@
     "lint": "eslint",
     "cli": "tsx scripts/cli.ts",
     "android:init": "npx cap init cipherlayer io.cipherlayer.app --web-dir out && npx cap add android",
-    "android:sync": "next build && npx cap sync android",
-    "android:open": "npx cap open android"
+    "android:sync": "npm run build && npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:build-native": "cd android-native && ./gradlew assembleDebug"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",

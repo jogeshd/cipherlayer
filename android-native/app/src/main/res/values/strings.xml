@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CipherLayer</string>
+    <string name="accessibility_description">Enables real-time PolyShield encryption and decryption for WhatsApp and Telegram. CipherLayer sees message input fields to provide on-the-fly security overlays.</string>
+</resources>
