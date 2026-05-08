@@ -32,8 +32,11 @@ jobs:
         npm run build
         mv app/_api_tmp app/api
 
-    - name: Setup Capacitor
-      run: npx cap sync
+    - name: Setup Capacitor & Initialize Android
+      run: |
+        npx cap init cipherlayer io.cipherlayer.app --web-dir out || true
+        npx cap add android || true
+        npx cap sync android
 
     - name: Build Android APK
       run: |
